@@ -22,7 +22,7 @@ namespace ImageSharp.Services
             try
             {
                 var bytes = Convert.FromBase64String(imageFile.base64);
-                using (var image = new FileStream($"{requestId}_{imageFile.FileName}", FileMode.Create))
+                using (var image = new FileStream($"Images\\{requestId}_{imageFile.FileName}", FileMode.Create))
                 {
                     image.Write(bytes, 0, bytes.Length);
                     image.Flush();
@@ -38,33 +38,43 @@ namespace ImageSharp.Services
         }
 
 
-        public async Task<string> Process(string imageName)
+        public async Task<ImageFile> Process(string imageName)
         {
+            ImageFile imageFile = new ImageFile();
+            string base64 = String.Empty;
+
             try
             {
-                String base64;
-
+                
                 FontCollection collection = new();
-                FontFamily family = collection.Add("path/to/font.ttf");
-                Font font = family.CreateFont(12, FontStyle.Italic);
+                FontFamily family = collection.Add("Fonts\\Roboto-Regular.ttf");
+                Font font = family.CreateFont(12, FontStyle.Bold);
 
-                DirectoryInfo directoryInfo = new DirectoryInfo("");
+                DirectoryInfo directoryInfo = new DirectoryInfo("Images");
                 FileInfo file = directoryInfo.GetFiles($"*{imageName}").FirstOrDefault();
 
                 if (file == null)
-                    throw new Exception("File not found");
-
-                using (Image image = Image.Load(file.FullName))
                 {
-                    image.Mutate(x => x.DrawText(file.Name, font, Color.Black, new PointF(10, 10)));
-                    base64 = image.ToBase64String(JpegFormat.Instance);
+                    imageFile.FileName = $"404_{imageName}";
                 }
-                return base64;
+                else
+                {
+                    using (Image image = Image.Load(file.FullName))
+                    {
+                        image.Mutate(x => x.DrawText(file.Name.Replace("_", " "), font, Color.YellowGreen, new PointF(10, 10)));
+                        base64 = image.ToBase64String(JpegFormat.Instance);
+                    }
+                    imageFile.FileName = file.Name;
+                    imageFile.base64 = base64;
+                }
+                
+                return imageFile;
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return "";
+                imageFile.FileName = $"Error_{imageName}";
+                return imageFile;
             }
 
         }

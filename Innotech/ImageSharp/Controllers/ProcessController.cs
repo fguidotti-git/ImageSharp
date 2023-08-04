@@ -29,6 +29,8 @@ namespace ImageSharp.Controllers
                 throw new Exception("Bad Request");
             }
 
+            int responseID = 0;
+
             ProcessResponse response = new ProcessResponse();
             response.Images = new List<ImageFile>();
 
@@ -38,22 +40,26 @@ namespace ImageSharp.Controllers
                 Parallel.ForEach(model.FileNames, async (fileName, loopState) =>
                 {
 
-                    var base64 = await _imageService.Process(fileName);
-                    if (string.IsNullOrEmpty(base64))
+                    var file = await _imageService.Process(fileName);
+
+                    if(!file.FileName.Contains("404") && !file.FileName.Contains("Fail"))
                     {
-                        fileName = $"fail_{fileName}";
+                        var arrName = file.FileName.Split('_');
+                        file.FileName = arrName[1];
+                        responseID = Convert.ToInt32(arrName[0]);
                     }
 
-                    response.Images.Add(new ImageFile() { base64 = base64, FileName = fileName });
+                    response.Images.Add(file);
 
                 });
 
             }
             catch (Exception e)
             {
-                _logger.LogError("SaveController.Index: ", e.Message);
+                _logger.LogError("ProcessController.Index: ", e.Message);
             }
 
+            response.RequestId = responseID;
             return response;
         }
 

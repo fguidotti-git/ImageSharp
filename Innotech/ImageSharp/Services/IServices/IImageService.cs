@@ -6,6 +6,6 @@ namespace ImageSharp.Services.IServices
     {
         public Task<bool> Save(ImageFile image, int requestId);
 
-        public Task<string> Process(string imageName);
+        public Task<ImageFile> Process(string imageName);
     }
 }
