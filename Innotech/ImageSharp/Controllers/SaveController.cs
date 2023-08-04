@@ -24,8 +24,12 @@ namespace ImageSharp.Controllers
                 _logger = logger;
             }
 
-
-            [HttpPost]
+        /// <summary>
+        /// Receive a list of base64 images, convert them into byte images and save them to disk
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
             public async Task<SaveResponse> Index([FromBody] SaveRequest model)
             {
                 string status = "Sucess";

@@ -20,7 +20,12 @@ namespace ImageSharp.Controllers
             _logger = logger;
         }
 
-
+        /// <summary>
+        /// Retrieve a list of images written to disk, adding the name and request ID as text in the image
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         [HttpPost]
         public async Task<ProcessResponse> Index([FromBody] ProcessRequest model)
         {
