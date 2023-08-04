@@ -45,7 +45,8 @@ namespace ImageSharp.Controllers
                 try
                 {
 
-                    Parallel.ForEach(model.Images, async (image, loopState) =>
+                //Parallel.ForEach to save images in parallel tasks
+                Parallel.ForEach(model.Images, async (image, loopState) =>
                     {
                         success = await _imageService.Save(image, model.RequestId);
                         if (!success)

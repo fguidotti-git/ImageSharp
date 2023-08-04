@@ -41,7 +41,7 @@ namespace ImageSharp.Controllers
 
             try
             {
-
+                //Parallel.ForEach to process images in parallel tasks
                 Parallel.ForEach(model.FileNames, async (fileName, loopState) =>
                 {
 
